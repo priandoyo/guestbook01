@@ -15,7 +15,17 @@ class Guestbook(BaseHTTPRequestHandler):
         messages = ""
         if FILE.exists():
             for line in FILE.read_text(encoding="utf-8").splitlines():
-                timestamp, name, message = line.split("|", 2)
+                parts = line.split("|", 2)
+
+                # Support both old and new message formats
+                if len(parts) == 3:
+                    timestamp, name, message = parts
+                elif len(parts) == 2:
+                    name, message = parts
+                    timestamp = "No timestamp"
+                else:
+                    continue
+
                 messages += (
                     f"<p><small>{escape(timestamp)}</small><br>"
                     f"<b>{escape(name)}</b>: "
@@ -27,7 +37,7 @@ class Guestbook(BaseHTTPRequestHandler):
         <html>
         <head><title>Guestbook</title></head>
         <body style="font-family:Arial;max-width:600px;margin:40px auto">
-            <h1>My Guestbook Running at Port 8000</h1>
+            <h1>My Guestbook</h1>
 
             <form method="POST">
                 <input name="name" placeholder="Your name" required>
@@ -70,8 +80,9 @@ class Guestbook(BaseHTTPRequestHandler):
         name = name.replace("|", "/").replace("\n", " ")
         message = message.replace("|", "/").replace("\n", " ")
 
-        # Save the new message
+        # Add timestamp and save the new message
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         with FILE.open("a", encoding="utf-8") as f:
             f.write(f"{timestamp}|{name}|{message}\n")
 
