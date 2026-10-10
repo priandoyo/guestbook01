@@ -37,7 +37,7 @@ class Guestbook(BaseHTTPRequestHandler):
         <html>
         <head><title>Guestbook</title></head>
         <body style="font-family:Arial;max-width:600px;margin:40px auto">
-            <h1>My Guestbook</h1>
+            <h1>My Guestbook Edited with Codespace</h1>
 
             <form method="POST">
                 <input name="name" placeholder="Your name" required>
