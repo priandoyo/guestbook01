@@ -1,0 +1,4 @@
+curl -i -X POST \
+  -H "Content-Type: application/json" \
+  -d '{"from":"API test","port":9999,"message":"UNAUTHORIZED CHANGE"}' \
+  http://127.0.0.1:8004/api
