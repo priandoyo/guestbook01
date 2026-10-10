@@ -1,8 +1,9 @@
-
+```python
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs
 from pathlib import Path
 from html import escape
+from datetime import datetime
 
 # Store messages beside this Python file
 FILE = Path(__file__).parent / "messages.txt"
@@ -15,9 +16,10 @@ class Guestbook(BaseHTTPRequestHandler):
         messages = ""
         if FILE.exists():
             for line in FILE.read_text(encoding="utf-8").splitlines():
-                name, message = line.split("|", 1)
+                timestamp, name, message = line.split("|", 2)
                 messages += (
-                    f"<p><b>{escape(name)}</b>: "
+                    f"<p><small>{escape(timestamp)}</small><br>"
+                    f"<b>{escape(name)}</b>: "
                     f"{escape(message)}</p>"
                 )
 
@@ -70,8 +72,9 @@ class Guestbook(BaseHTTPRequestHandler):
         message = message.replace("|", "/").replace("\n", " ")
 
         # Save the new message
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with FILE.open("a", encoding="utf-8") as f:
-            f.write(f"{name}|{message}\n")
+            f.write(f"{timestamp}|{name}|{message}\n")
 
         # Return to the guestbook page
         self.send_response(303)
@@ -81,3 +84,4 @@ class Guestbook(BaseHTTPRequestHandler):
 
 print("Guestbook running at http://127.0.0.1:8000")
 HTTPServer(("0.0.0.0", 8000), Guestbook).serve_forever()
+```
